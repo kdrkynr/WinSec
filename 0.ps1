@@ -1,7 +1,9 @@
 $wsh = New-Object -ComObject Wscript.Shell
 
-$LFResults = get-winevent -FilterHashtable @{Logname="Security";ID=4625} | where Timecreated -GE (Get-Date).AddMinutes(-75)
-$LSResults = get-winevent -FilterHashtable @{Logname="Security";ID=4624} | where Timecreated -GE (Get-Date).AddMinutes(-75) 
+$time = (Get-Date).AddMinutes(-75)
+
+$LFResults = get-winevent -FilterHashtable @{Logname="Security";ID=4625;StartTime=$time}
+$LSResults = get-winevent -FilterHashtable @{Logname="Security";ID=4624;StartTime=$time}
 
 
 Write-Host "Host File" -ForegroundColor darkred -BackgroundColor white
