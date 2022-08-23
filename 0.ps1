@@ -31,6 +31,8 @@ $wsh.Popup("New User --> $Name")
 
 
 Write-Host "Logon Failures" -ForegroundColor darkred -BackgroundColor white
+$TLFR = $LFResults.Count
+$a = 1
 foreach ($r in $LFResults){
 $EventTime = $r.TimeCreated
 [xml]$evt = $r.ToXml()
@@ -42,12 +44,15 @@ $D = $obj.TargetDomainName
 $T = $obj.LogonType
 $IP = $obj.IpAddress
 $H = $obj.WorkstationName
-$wsh.Popup("LOGON FAILURE >> User: $D\$U, Type: $T, IP: $IP($H), $EventTime")
+$wsh.Popup("$a\$TLFR LOGON FAILURE >> User: $D\$U, Type: $T, IP: $IP($H), $EventTime")
+$a = $a + 1
 }
 
 
 
 Write-Host "Logon Success" -ForegroundColor darkred -BackgroundColor white
+$TLSR = $LSResults.Count
+$a = 1
 foreach ($r in $LSResults){
 $EventTime = $r.TimeCreated
 [xml]$evt = $r.ToXml()
@@ -63,7 +68,8 @@ $D = $obj.TargetDomainName
 $T = $obj.LogonType
 $IP = $obj.IpAddress
 $H = $obj.WorkstationName
-$wsh.Popup("LOGON SUCCESS >> User: $D\$U, Type: $T, IP: $IP($H), $EventTime")
+$wsh.Popup("$a\$TLSR LOGON SUCCESS >> User: $D\$U, Type: $T, IP: $IP($H), $EventTime")
+$a = $a + 1
 }
 }
 
