@@ -4,7 +4,10 @@ $time = (Get-Date).AddMinutes(-75)
 
 $LFResults = get-winevent -FilterHashtable @{Logname="Security";ID=4625;StartTime=$time}
 $LSResults = get-winevent -FilterHashtable @{Logname="Security";ID=4624;StartTime=$time}
-
+$WinEventStart = Get-WinEvent -FilterHashtable @{Logname="System";ID=6005;StartTime=$time}
+$WinEventStart = Get-WinEvent -FilterHashtable @{Logname="System";ID=6006;StartTime=$time}
+$InstalledService = Get-WinEvent -FilterHashtable @{Logname="System";ID=7045;StartTime=$time}
+$ServiceStartType = Get-WinEvent -FilterHashtable @{Logname="System";ID=7040;StartTime=$time}
 
 Write-Host "Host File" -ForegroundColor darkred -BackgroundColor white
 
@@ -141,5 +144,46 @@ $PN = (Get-Process -Id $ID).ProcessName
 $x = $WhiteProcessList -contains $PN
 if ($x -ne "True"){
 $wsh.Popup("TCP $LP is listening for $PN process and PID is $ID")
+}
+}
+
+
+Write-Host "Event Log Service START" -ForegroundColor darkred -BackgroundColor white
+foreach ($a in $WinEventStart){
+$TC = $a.TimeCreated
+$wsh.Popup("Event Log Service START at $TC")
+}
+
+
+Write-Host "Event Log Service STOP" -ForegroundColor darkred -BackgroundColor white
+foreach ($a in $WinEventClose){
+$TC = $a.TimeCreated
+$wsh.Popup("Event Log Service STOP at $TC")
+}
+
+
+Write-Host "New Installed Service" -ForegroundColor darkred -BackgroundColor white
+foreach ($a in $InstalledService){
+$TC = $a.TimeCreated
+$M = $a.Message
+$wsh.Popup("$TC >> $M")
+}
+
+
+Write-Host "Service Start Type Change" -ForegroundColor darkred -BackgroundColor white
+foreach ($a in $ServiceStartType){
+[xml]$evt = $a.ToXml()
+$evt.Event.EventData.Data | foreach-object -Begin {$h = @{}} -Process {
+$h.add($_.name,$_.'#text')
+} -end { $obj = New-Object -TypeName PSObject -Property $h }
+$Name = $obj.param1
+$OldType = $obj.param2
+$NewType = $obj.param3
+$Short = $obj.param4
+$Exception = "BITS"
+$x = $Short -contains $Exception
+if ($x -ne "True" ){
+$TC = $a.TimeCreated
+$wsh.Popup("$Name START TYPE was $OldType TO $NewType at $TC")
 }
 }
