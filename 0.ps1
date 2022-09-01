@@ -90,6 +90,22 @@ $wsh.Popup("New Schedule Task >>> Author: $Author Task Name: $Name Path: $Path D
 }
 }
 
+
+Write-Host "SMB SHARE" -ForegroundColor darkred -BackgroundColor white
+$Sharelist = Get-SmbShare 
+$DefaultShare = "ADMIN$", "C$", "D$", "IPC$"
+foreach($a in $Sharelist){
+$b = $a.Name
+$x = $DefaultShare -contains $b
+if ($x -ne "False"){
+$Desc = $a.Description
+$Path = $a.Path
+echo $Path
+$wsh.Popup("NEW or UNDEFAULT SMB Share $b for $Path ($Desc)")
+}
+}
+
+
 Write-Host "TCP Connections" -ForegroundColor darkred -BackgroundColor white
 $IPs = Get-NetIPAddress
 $PrivateIPs = @()
