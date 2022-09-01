@@ -76,6 +76,20 @@ $a = $a + 1
 }
 
 
+Write-Host "Task Schedule" -ForegroundColor darkred -BackgroundColor white
+$ST = Get-ScheduledTask
+foreach ($a in $ST){
+$Date = $a.Date
+$compare = $Time
+if ($Compare-le $Date){
+$Name = $a.TaskName
+$Path = $a.TaskPath
+$Author = $a.Author
+$Date = $a.Date
+$wsh.Popup("New Schedule Task >>> Author: $Author Task Name: $Name Path: $Path Date: $Date ")
+}
+}
+
 Write-Host "TCP Connections" -ForegroundColor darkred -BackgroundColor white
 $IPs = Get-NetIPAddress
 $PrivateIPs = @()
